@@ -3,7 +3,7 @@ from aiogram import types
 from backend.services.services import Services
 
 
-class StartRoute:
+class StartSubhandler:
     def __init__(self, services: Services):
         self._services = services
 
