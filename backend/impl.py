@@ -1,18 +1,25 @@
-from interface import *
+from services.admin_service import AdminService
+from database import JsonDatabase
+import dotenv
 
 
-class Service(PollService):
+class AdminServiceImpl(AdminService):
     def __init__(self):
+        self.password = dotenv.get_key("env/.env", "PASSWORD")
+        self.database = JsonDatabase("json_data/admins.json")
+
+    def authorize(self, password: str, user: str) -> bool:
+        if self.password == password:
+            self.database.info = self.database.info["Data"] + [user]
+            return True
+        else:
+            print("incorrect password.")
+            return False
+
+    def check_admin(self, user: str) -> bool:
         pass
 
-    def add_user(self, user: str) -> bool:
-        pass
 
-    def assign_admin(self):
-        pass
-
-    def respond(self, question_id: str, answer: str, from_user: str) -> bool:
-        pass
-
-    def get_all_users(self) -> List[str]:
-        pass
+admin_service = AdminServiceImpl()
+admin_service.authorize("admin123", 123456)
+admin_service.authorize("admin13", 123456)
