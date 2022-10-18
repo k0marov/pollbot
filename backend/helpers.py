@@ -1,4 +1,5 @@
 from dataclasses import dataclass
+from typing import Any
 
 
 @dataclass
@@ -8,9 +9,11 @@ class Response:
       code: int - code to return\n
       path: str - database path\n
       status: str - short description\n
-      error_desc(opt): str - description of error\n
+      text(opt): str - response text\n
     """
     code: int
     path: str
     status: str
-    error_desc: str = ""
+    response: Any = ""
+
+
