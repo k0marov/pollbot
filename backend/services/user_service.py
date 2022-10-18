@@ -5,6 +5,7 @@ from typing import List
 class UserService(abc.ABC):
     @abc.abstractmethod
     def get_all_users(self) -> List[str]:
+        """Returns a list of all user ids stored in the database"""
         pass
     @abc.abstractmethod
     def add_user(self, user_id: str) -> None:
