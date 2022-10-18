@@ -25,8 +25,11 @@ class BotFrontend:
         )
     async def _admin_login(self, event: types.Message):
         password = event.text.removeprefix("/admin_login").strip()
-        if self._services.admin.check_admin_pass(password):
-            self._services.assign_admin(event.from_user.id)
+        success = self._services.admin.authorize(password, event.from_user.id)
+        if success:
+            await event.answer("Вы успешно зарегистрировались в качестве админа.")
+        else:
+            await event.answer("Ошибка - неверный пароль")
 
     async def start(self):
         try:
