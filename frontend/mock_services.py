@@ -27,4 +27,4 @@ class MockUserService(UserService):
         raise NotImplementedError()
 
     def add_user(self, user: str):
-        raise NotImplementedError()
+        print("added user %s" % user)

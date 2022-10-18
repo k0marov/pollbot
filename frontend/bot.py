@@ -19,10 +19,8 @@ class BotFrontend:
         self._services = services
 
     async def _start_handler(self, event: types.Message):
-        await event.answer(
-            f"Hello, {event.from_user.get_mention(as_html=True)} 👋!",
-            parse_mode=types.ParseMode.HTML,
-        )
+        self._services.user.add_user(event.from_user.id)
+        await event.answer("Ваш id был зарегистрирован в базе данных.")
     async def _admin_login(self, event: types.Message):
         password = event.text.removeprefix("/admin_login").strip()
         success = self._services.admin.authorize(password, event.from_user.id)
