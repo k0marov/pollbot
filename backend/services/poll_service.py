@@ -11,6 +11,7 @@ class Answer(Enum):
 
 @dataclasses.dataclass
 class Poll:
+    title: str
     questions: List[str]
 
 class PollService(abc.ABC):
