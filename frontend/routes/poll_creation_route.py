@@ -3,6 +3,7 @@ from aiogram.fsm.context import FSMContext
 from aiogram.fsm import state
 from aiogram import types
 
+from backend.services import poll_service
 from frontend.bot import Services
 
 class PollCreation(state.StatesGroup):
@@ -33,9 +34,9 @@ def poll_creation_route(services: Services) -> Router:
     @router.message(PollCreation.entering_question)
     async def enter_question(message: types.Message, state: FSMContext):
         current_state = await state.get_data()
-        questions = current_state.get(QUESTIONS_KEY)
-        new_questions = [questions] + [message.text]
-        await state.update_data(QUESTIONS_KEY=new_questions)
+        questions = current_state.get(QUESTIONS_KEY, [])
+        questions.append(message.text)
+        await state.update_data({QUESTIONS_KEY: questions})
         await _base_send_question_invite(message, state)
 
 
@@ -44,6 +45,16 @@ def poll_creation_route(services: Services) -> Router:
         await query.message.delete_reply_markup()
         await query.message.answer("Создание опроса отменено")
         await state.clear()
+        await query.answer()
+
+    @router.callback_query(filters.Text(text=STOP_CB_DATA))
+    async def stop_callback(query: types.CallbackQuery, state: FSMContext):
+        current_state = await state.get_data()
+        questions = current_state.get(QUESTIONS_KEY, [])
+        if not questions: return
+        services.poll.create_poll(poll_service.Poll(questions=list(enumerate(questions))))
+        await query.message.answer("Опрос успешно создан")
+        await query.answer()
 
     return router
 

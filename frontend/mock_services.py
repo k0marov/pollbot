@@ -17,7 +17,7 @@ class MockPollService(PollService):
         pass
 
     def create_poll(self, poll: Poll) -> str:
-        raise NotImplementedError()
+        print("created new poll: " + str(poll))
 
     def get_poll(self, poll_id: str) -> Poll:
         raise NotImplementedError()
