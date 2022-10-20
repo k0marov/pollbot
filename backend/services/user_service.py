@@ -1,6 +1,10 @@
+"""
+A module that defines an interface for interacting with the Users database"
+!!! Important !!!
+user_id is assumed to be the Telegram chat id
+"""
 import abc
 from typing import List
-
 
 class UserService(abc.ABC):
     @abc.abstractmethod
