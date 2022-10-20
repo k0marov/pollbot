@@ -9,6 +9,7 @@ class AdminService(abc.ABC):
         Otherwise, returns False.
         """
         pass
+
     @abc.abstractmethod
     def check_admin(self, user: str) -> bool:
         """Returns True if the specified user is in the admins list, otherwise False"""

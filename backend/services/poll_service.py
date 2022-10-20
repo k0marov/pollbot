@@ -10,6 +10,7 @@ class Answer(Enum):
     NO = 2
     IDK = 3
 
+
 @dataclasses.dataclass
 class Question:
     id: str
@@ -32,11 +33,13 @@ class Poll:
     title: str
     questions: List[Question]
 
+
 class PollService(abc.ABC):
     @abc.abstractmethod
     def create_poll(self, poll: Poll) -> str:
         """Creates a Poll with the given properties. Returns the id of the created poll"""
         pass
+
     @abc.abstractmethod
     def get_poll(self, poll_id: str) -> Poll:
         """Returns the poll with the given id"""
@@ -50,6 +53,4 @@ class PollService(abc.ABC):
     def get_stats(self, poll_id: str) -> PollStats:
         """Returns the response stats for the poll with the given id"""
         pass
-
-
 
