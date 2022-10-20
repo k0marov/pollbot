@@ -28,7 +28,6 @@ class PollStats:
 
 @dataclasses.dataclass
 class Poll:
-    id: str
     questions: List[Question]
 
 
