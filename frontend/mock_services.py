@@ -13,6 +13,8 @@ class MockAdminService(AdminService):
         return False
 
 class MockPollService(PollService):
+    def __init__(self):
+        self.polls = []
     def get_stats(self, poll_id: str) -> PollStats:
         pass
 
@@ -20,7 +22,8 @@ class MockPollService(PollService):
         print("created new poll: " + str(poll))
 
     def get_poll(self, poll_id: str) -> Poll:
-        raise NotImplementedError()
+        print("getting poll: " + str(poll_id))
+
 
     def record_answer(self, poll_id: str, question_id: str, answer: Answer) -> None:
         raise NotImplementedError()

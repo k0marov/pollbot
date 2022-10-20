@@ -28,6 +28,7 @@ class PollStats:
 
 @dataclasses.dataclass
 class Poll:
+    id: str
     questions: List[Question]
 
 
@@ -46,6 +47,7 @@ class PollService(abc.ABC):
     def record_answer(self, poll_id: str, question_id: str, answer: Answer) -> None:
         """Records the answer to the poll question with the given id"""
         pass
+
     @abc.abstractmethod
     def get_stats(self, poll_id: str) -> PollStats:
         """Returns the response stats for the poll with the given id"""

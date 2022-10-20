@@ -16,7 +16,7 @@ class BotFrontend:
         disp = Dispatcher()
         disp.include_router(start_route(self._services))
         disp.include_router(poll_creation_route(self._services))
-        disp.include_router(poll_sending_route(self._services))
+        disp.include_router(poll_sending_route(self._services, None))
         disp.run_polling(self._bot)
 
 
