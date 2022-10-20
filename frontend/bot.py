@@ -19,6 +19,7 @@ class BotFrontend:
         disp.include_router(poll_creation_route(self._services))
         poll_invite_sender = poll_answering_route.poll_invite_sender_factory(self._bot)
         disp.include_router(poll_sending_route(self._services, poll_invite_sender))
+        disp.include_router(poll_answering_route.poll_answering_route(self._services))
         disp.run_polling(self._bot)
 
 

@@ -6,6 +6,7 @@ from aiogram.fsm import state
 from aiogram import types
 
 from backend.services import poll_service
+from backend.services.poll_service import Question
 from frontend.bot import Services
 
 # TODO: add the admin checks
@@ -45,7 +46,10 @@ def poll_creation_route(services: Services) -> Router:
         state_data = await state.get_data()
         questions = state_data.get(QUESTIONS_KEY, [])
         if not questions: return
-        services.poll.create_poll(poll_service.Poll(questions=list(enumerate(questions))))
+        poll = poll_service.Poll(questions=[
+            Question(text=text) for text in questions
+        ])
+        services.poll.create_poll(poll)
         await state.clear()
         await query.message.answer("Опрос успешно создан")
         await query.answer()

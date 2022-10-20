@@ -13,7 +13,6 @@ class Answer(Enum):
 
 @dataclasses.dataclass
 class Question:
-    id: str
     text: str
 
 @dataclasses.dataclass

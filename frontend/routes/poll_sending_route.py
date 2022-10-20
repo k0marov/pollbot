@@ -16,6 +16,8 @@ def poll_sending_route(services: Services, send_poll_invite: poll_answering_rout
         poll = services.poll.get_poll(id)
         if not poll: return await message.answer("Опроса с таким id не найдено.")
         all_users = [user for user in services.user.get_all_users() if user != str(message.chat.id)]
+
+        # TODO: maybe there should be a timeout here to escape the 429 Too Many Requests error
         for user in all_users:
             await send_poll_invite(user, poll)
 
