@@ -26,11 +26,8 @@ class AnswerStats:
 class PollStats:
     question_stats: List[typing.Tuple[Question, AnswerStats]]
 
-
-
 @dataclasses.dataclass
 class Poll:
-    title: str
     questions: List[Question]
 
 

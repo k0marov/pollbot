@@ -2,6 +2,7 @@
 from aiogram import Bot, Dispatcher
 
 from backend.services.services import Services
+from frontend.routes.poll_creation_route import poll_creation_route
 from frontend.routes.start_route import start_route
 
 
@@ -13,6 +14,7 @@ class BotFrontend:
     def start(self):
         disp = Dispatcher()
         disp.include_router(start_route(self._services))
+        disp.include_router(poll_creation_route(self._services))
         disp.run_polling(self._bot)
 
 
