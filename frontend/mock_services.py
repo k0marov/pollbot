@@ -1,7 +1,7 @@
 from typing import List
 
 from backend.services.admin_service import AdminService
-from backend.services.poll_service import PollService, Answer, Poll
+from backend.services.poll_service import PollService, Answer, Poll, PollStats
 from backend.services.user_service import UserService
 
 
@@ -13,6 +13,9 @@ class MockAdminService(AdminService):
         return False
 
 class MockPollService(PollService):
+    def get_stats(self, poll_id: str) -> PollStats:
+        pass
+
     def create_poll(self, poll: Poll) -> str:
         raise NotImplementedError()
 

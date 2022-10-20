@@ -1,21 +1,18 @@
 
 from aiogram import Bot, Dispatcher
 
-from frontend.subhandlers.start_subhandler import StartSubhandler
+from backend.services.services import Services
+from frontend.routes.start_route import start_route
 
 
 class BotFrontend:
-    def __init__(self, token: str, start_route: StartSubhandler):
+    def __init__(self, token: str, services: Services):
         self._bot = Bot(token=token)
-        self._start_route = start_route
+        self._services = services
 
-    async def start(self):
-        try:
-            disp = Dispatcher(bot=self._bot)
-            disp.register_message_handler(self._start_route.start, commands={"start", "restart"})
-            disp.register_message_handler(self._start_route.admin_login, commands={"admin_login"})
-            await disp.start_polling()
-        finally:
-            await self._bot.close()
+    def start(self):
+        disp = Dispatcher()
+        disp.include_router(start_route(self._services))
+        disp.run_polling(self._bot)
 
 
