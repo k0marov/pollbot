@@ -8,6 +8,8 @@ from aiogram import types
 from backend.services import poll_service
 from frontend.bot import Services
 
+# TODO: add the admin checks
+
 class PollCreation(state.StatesGroup):
     entering_question = state.State()
 

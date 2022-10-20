@@ -1,7 +1,7 @@
 from typing import List
 
 from backend.services.admin_service import AdminService
-from backend.services.poll_service import PollService, Answer, Poll, PollStats
+from backend.services.poll_service import PollService, Answer, Poll, PollStats, PollEntity
 from backend.services.user_service import UserService
 
 
@@ -23,9 +23,9 @@ class MockPollService(PollService):
         self.polls.append(poll)
         return str(len(self.polls)-1)
 
-    def get_poll(self, poll_id: str) -> Poll:
+    def get_poll(self, poll_id: str) -> PollEntity:
         print("getting poll: " + str(poll_id))
-        return self.polls[int(poll_id)]
+        return PollEntity(poll=self.polls[int(poll_id)], id=poll_id)
 
 
     def record_answer(self, poll_id: str, question_id: str, answer: Answer) -> None:

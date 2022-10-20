@@ -30,6 +30,11 @@ class PollStats:
 class Poll:
     questions: List[Question]
 
+@dataclasses.dataclass
+class PollEntity:
+    id: str
+    poll: Poll
+
 
 class PollService(abc.ABC):
     @abc.abstractmethod
@@ -38,7 +43,7 @@ class PollService(abc.ABC):
         pass
 
     @abc.abstractmethod
-    def get_poll(self, poll_id: str) -> Poll:
+    def get_poll(self, poll_id: str) -> PollEntity:
         """Returns the poll with the given id"""
         pass
 
