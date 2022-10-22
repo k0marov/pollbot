@@ -19,6 +19,7 @@ def poll_sending_route(services: Services, send_poll_invite: poll_answering_rout
 
     @router.message(filters.Command("send_poll"))
     async def admin_send_poll_handler(message: types.Message):
+        # TODO: remove code duplication with poll_stats_route
         polls = services.poll.get_all_polls()
         buttons = [
             [types.InlineKeyboardButton(text=e.poll.title, callback_data=POLL_ID_PREFIX+e.id)]

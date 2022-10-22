@@ -30,7 +30,7 @@ class MockPollService(PollService):
         self.polls = []
         self.stats = {}
     def get_stats(self, poll_id: str) -> typing.Optional[PollStats]:
-        return self.stats[poll_id]
+        return self.stats.get(poll_id)
 
     def create_poll(self, poll: Poll) -> str:
         print("created new poll: " + str(poll))
