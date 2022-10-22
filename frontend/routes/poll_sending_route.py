@@ -1,3 +1,5 @@
+import asyncio
+
 from aiogram import Router, filters, types
 
 from backend.services.services import Services
@@ -21,8 +23,7 @@ def poll_sending_route(services: Services, send_poll_invite: poll_answering_rout
         all_users = [user for user in services.user.get_all_users() if user != str(message.chat.id)]
 
         # TODO: maybe there should be a timeout here to escape the 429 Too Many Requests error
-        for user in all_users:
-            await send_poll_invite(user, poll)
+        await asyncio.gather(*[send_poll_invite(user,poll) for user in all_users])
 
         await message.answer("Приглашение поучавствовать в опросе было отправлено в %d чатов" % len(all_users))
 
