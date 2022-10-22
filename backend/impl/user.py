@@ -8,8 +8,8 @@ from backend.store import store
 class UserServiceImpl(user.UserService):
     _USERS_KEY = 'users'
 
-    def __init__(self, store: store.Store):
-        self._store = store
+    def __init__(self, s: store.Store):
+        self._store = s
 
     def get_all_users(self) -> List[str]:
         result = self._store.get(UserServiceImpl._USERS_KEY)
