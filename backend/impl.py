@@ -3,9 +3,7 @@ from typing import List
 from backend.services.poll_service import PollStats
 from services.admin_service import AdminService
 from services.user_service import UserService
-from services.poll_service import PollService, Poll, AnswerStats, Answer, Question
-import random
-import string
+from services.poll_service import PollService, Poll, AnswerStats, Answer, Question, PollStats
 from database import JsonDatabase
 import dotenv
 
@@ -48,25 +46,35 @@ class UserServiceImpl(UserService):
 
 
 class PollServiceImpl(PollService):
-    alphabet = string.ascii_letters + string.digits
-    size = 20
     database = JsonDatabase('json_data/polls.json')
 
     def create_poll(self, poll: Poll) -> str:
-        identifier = "".join([random.choice(self.alphabet) for _ in range(self.size)])
-        polls = self.database.get()
-        polls[identifier] = [poll.title, poll.questions]
-        return identifier
+        polls = self.database.get().response["Data"]
+        if not (poll.title in polls):
+            questions = {}
+            for i in poll.questions:
+                questions[i.id] = {"text": i.text, "answers": {str(Answer.YES): 0, str(Answer.NO): 0, str(Answer.IDK): 0}}
+            polls[poll.title] = {"title": poll.title, "questions": questions}
+            self.database.push(polls)
+        return poll.title
 
     def get_poll(self, poll_id: str) -> Poll:
-        pass
+        data = self.database.get().response["Data"][poll_id]
+        questions = []
+        for k, v in data["questions"].items():
+            questions.append(Question(k, v["text"]))
+        return Poll(data["title"], questions)
 
     def record_answer(self, poll_id: str, question_id: str, answer: Answer) -> None:
-        pass
+        data = self.database.get().response["Data"]
+        data[poll_id]["questions"][question_id]["answers"][str(answer)] += 1
+        self.database.push(data)
 
     def get_stats(self, poll_id: str) -> PollStats:
-        pass
-
-
-service = PollServiceImpl()
-print(service.create_poll(Poll("", [])))
+        data = self.database.get().response["Data"]
+        questions = self.get_poll(poll_id).questions
+        answers = []
+        for q in questions:
+            answer = data[poll_id]["questions"][q.id]["answers"]
+            answers.append((q, AnswerStats(answer[str(Answer.YES)], answer[str(Answer.NO)], answer[str(Answer.IDK)])))
+        return PollStats(answers)
