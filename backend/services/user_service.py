@@ -10,5 +10,6 @@ class UserService(abc.ABC):
 
     @abc.abstractmethod
     def add_user(self, user_id: str) -> None:
-        """Adds the user_id to the users list. If it already exists, should do nothing (e.g. there should not be any duplicates)"""
+        """Adds the user_id to the users list. If it already exists,
+         should do nothing (e.g. there should not be any duplicates)"""
         pass

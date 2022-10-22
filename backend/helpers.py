@@ -9,7 +9,7 @@ class Response:
       code: int - code to return\n
       path: str - database path\n
       status: str - short description\n
-      text(opt): str - response text\n
+      response(opt): str - response text\n
     """
     code: int
     path: str

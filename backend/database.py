@@ -19,12 +19,13 @@ class JsonDatabase(Database):
     def __init__(self, path: str):
         self.__path = path
         self.__info: dict = {}
+        self.__data = ""
 
     def get(self):
         try:
             with open(self.__path, "r") as file:
-                self.__info = json.load(file)
-            return Response(200, self.__path, "success", self.info)
+                self.__data = json.load(file)
+            return Response(200, self.__path, "success", self.__data)
 
         except BaseException as e:
             return Response(404, self.__path, "error", str(e))
@@ -32,21 +33,8 @@ class JsonDatabase(Database):
     def push(self, data):
         try:
             with open(self.__path, "w") as file:
-                file.write(json.dumps(data))
-            return Response(200, self.__path, "success", self.__info)
+                file.write(json.dumps({"Data": data}))
+            return Response(200, self.__path, "success", self.__data)
 
         except BaseException as e:
-            return Response(200, self.__path, "error", str(e))
-
-    @property
-    def info(self):
-        self.__info = self.get().response
-        return self.__info
-
-    @info.setter
-    def info(self, value):
-        if isinstance(value, dict):
-            self.__info = value
-            self.push(value)
-        else:
-            raise ValueError("type of 'info' field should be 'dict'")
+            return Response(404, self.__path, "error", str(e))
