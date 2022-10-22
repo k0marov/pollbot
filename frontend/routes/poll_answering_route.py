@@ -7,7 +7,10 @@ from aiogram.fsm import state
 from aiogram.fsm.context import FSMContext
 
 from backend.services import poll_service
+from backend.services.poll_service import Answer
 from backend.services.services import Services
+
+# TODO: move all of the text literals to a separate module as constants
 
 
 class PollAnswering(state.StatesGroup):
@@ -51,7 +54,13 @@ def poll_answering_route(services: Services) -> Router:
         await state.set_state(PollAnswering.answering_question)
         await state.set_data({POLL_ID_KEY: poll_id, QUESTION_ID_KEY: question_id})
 
-        await query.message.answer(poll.poll.questions[question_id].text)
+        buttons = [[types.InlineKeyboardButton(text="Да", callback_data=str(Answer.YES)),
+                    types.InlineKeyboardButton(text="Нет", callback_data=str(Answer.NO)),
+                    types.InlineKeyboardButton(text="Не знаю", callback_data=str(Answer.IDK)),]]
+        keyboard = types.InlineKeyboardMarkup(inline_keyboard=buttons)
+        await query.message.answer(poll.poll.questions[question_id].text, reply_markup=keyboard)
+
+
 
 
     return router

@@ -6,9 +6,9 @@ from typing import List
 
 
 class Answer(Enum):
-    YES = 1
-    NO = 2
-    IDK = 3
+    YES = "YES"
+    NO = "NO"
+    IDK = "IDK"
 
 
 @dataclasses.dataclass
