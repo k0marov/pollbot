@@ -13,7 +13,6 @@ from backend.services.poll_service import Answer
 from backend.services.services import Services
 
 # TODO: move all of the text literals to a separate module as constants
-# TODO: maybe get rid of PollEntity to reduce complexity
 
 
 class AnswerCB(callback_data.CallbackData, prefix="answer"):
@@ -48,7 +47,7 @@ def poll_answering_route(services: Services) -> Router:
         if not poll:
             await message.answer("К сожалению, данный опрос больше не доступен.")
             return
-        if question_id > len(poll.poll.questions)-1:
+        if question_id > len(poll.questions)-1:
             await message.answer("Спасибо за участие в опросе")
             return
 
@@ -56,7 +55,7 @@ def poll_answering_route(services: Services) -> Router:
                    for answer in [Answer.YES, Answer.NO, Answer.IDK]]
         builder = InlineKeyboardBuilder()
         for text, cb in answers: builder.button(text=text, callback_data=cb)
-        await message.answer(poll.poll.questions[question_id].text, reply_markup=builder.as_markup())
+        await message.answer(poll.questions[question_id].text, reply_markup=builder.as_markup())
 
 
     @router.callback_query(filters.Text(startswith=ACCEPT_POLL_CB_PREFIX))

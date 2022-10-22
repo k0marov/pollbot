@@ -44,7 +44,7 @@ class PollService(abc.ABC):
         pass
 
     @abc.abstractmethod
-    def get_poll(self, poll_id: str) -> typing.Optional[PollEntity]:
+    def get_poll(self, poll_id: str) -> typing.Optional[Poll]:
         """Returns the poll with the given id"""
         pass
 

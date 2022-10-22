@@ -29,7 +29,7 @@ def poll_stats_route(services: Services, admin_mw: AdminCheckMiddleware) -> Rout
         if not stats:
             await query.message.answer("Для этого опроса пока нет статистики.")
             return
-        text = f"Статистика для опроса \"{poll.poll.title}\"\n"
+        text = f"Статистика для опроса \"{poll.title}\"\n"
         for question, qstats in stats.question_stats:
             text += f"{question.text}: Yes {qstats.yes}, No {qstats.no}, Idk {qstats.idk}\n"
         await query.message.answer(text)
@@ -37,7 +37,7 @@ def poll_stats_route(services: Services, admin_mw: AdminCheckMiddleware) -> Rout
         # TODO: factor out this part into a reusable function
         await query.answer()
         await query.message.delete_reply_markup()
-        await query.message.edit_text(query.message.text + f'\nВыбран опрос {poll.poll.title}')
+        await query.message.edit_text(query.message.text + f'\nВыбран опрос {poll.title}')
 
     return router
 

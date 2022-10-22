@@ -37,16 +37,16 @@ class MockPollService(PollService):
         self.polls.append(poll)
         return str(len(self.polls)-1)
 
-    def get_poll(self, poll_id: str) -> typing.Optional[PollEntity]:
+    def get_poll(self, poll_id: str) -> typing.Optional[Poll]:
         print("getting poll: " + str(poll_id))
-        return PollEntity(poll=self.polls[int(poll_id)], id=poll_id)
+        return self.polls[int(poll_id)]
 
 
     def record_answer(self, poll_id: str, question_id: int, answer: Answer) -> None:
         print("recording answer " + answer + " for question " + str(question_id) + " in poll " + poll_id)
         poll = self.get_poll(poll_id)
         if not poll_id in self.stats:
-            self.stats[poll_id] = PollStats([(question, AnswerStats(0, 0, 0)) for question in poll.poll.questions])
+            self.stats[poll_id] = PollStats([(question, AnswerStats(0, 0, 0)) for question in poll.questions])
         if answer == Answer.YES:
             self.stats[poll_id].question_stats[question_id][1].yes += 1
         elif answer == Answer.NO:
