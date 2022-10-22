@@ -8,18 +8,29 @@ from backend.services.user_service import UserService
 
 
 class MockAdminService(AdminService):
+    def __init__(self):
+        self._admins = []
     def authorize(self, password: str, user: str) -> bool:
-        return password == "abracadabra"
-
-    def check_admin(self, user: str) -> bool:
+        print(f"authorizing {user} with password {password}")
+        if password == "abracadabra":
+            if not user in self._admins:
+                self._admins.append(user)
+            return True
         return False
 
+    def check_admin(self, user: str) -> bool:
+        print(f"checking admin {user}")
+        return user in self._admins
+
 class MockPollService(PollService):
+    def get_all_polls(self) -> List[PollEntity]:
+        return [PollEntity(str(i), p) for i, p in enumerate(self.polls)]
+
     def __init__(self):
         self.polls = []
         self.stats = {}
     def get_stats(self, poll_id: str) -> typing.Optional[PollStats]:
-        return self.stats[poll_id]
+        return self.stats.get(poll_id)
 
     def create_poll(self, poll: Poll) -> str:
         print("created new poll: " + str(poll))

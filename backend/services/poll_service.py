@@ -51,6 +51,10 @@ class PollService(abc.ABC):
         pass
 
     @abc.abstractmethod
+    def get_all_polls(self) -> List[PollEntity]:
+        pass
+
+    @abc.abstractmethod
     def record_answer(self, poll_id: str, question_id: int, answer: Answer) -> None:
         """Records the answer to the poll question with the given id"""
         pass
