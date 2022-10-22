@@ -42,6 +42,6 @@ def poll_sending_route(services: Services, send_poll_invite: poll_answering_rout
         await query.message.answer("Приглашение поучавствовать в опросе было отправлено в %d чатов" % len(all_users))
         await query.answer()
         await query.message.delete_reply_markup()
-        await query.message.edit_text(query.message.text + f'\nВыбран опрос {poll.poll.title}')
+        await query.message.edit_text(query.message.text + f'\nВыбран опрос {poll.title}')
 
     return router

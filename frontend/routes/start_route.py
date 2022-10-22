@@ -9,6 +9,14 @@ def start_route(services: Services) -> Router:
     async def _start(message: types.Message):
         services.user.add_user(str(message.chat.id))
         await message.answer("Ваш id был зарегистрирован в базе данных.")
+        text = """
+        Список команд: 
+        /admin_login <пароль> - получить права админа
+        /create_poll - создание нового опроса 
+        /send_poll - рассылка опроса 
+        /stats - получение статистики по опросу 
+        """
+        await message.answer(text)
 
     @router.message(filters.Command("admin_login"))
     async def _admin_login(message: types.Message):

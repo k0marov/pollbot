@@ -19,7 +19,7 @@ class AdminCheckMessageMiddleware(BaseMiddleware):
         if self._service.check_admin(user_id):
             return await handler(event, data)
         else:
-            # TODO: add some error message here
+            await event.answer("Чтобы выполнить это действие, нужно быть админом. Введите /admin_login")
             print("ignoring event because user does not have admin rights")
             return None
 
@@ -36,7 +36,7 @@ class AdminCheckCBMiddleware(BaseMiddleware):
         if self._service.check_admin(user_id):
             return await handler(event, data)
         else:
-            # TODO: add some error message here
+            await event.answer("Чтобы выполнить это действие, нужно быть админом. Введите /admin_login")
             print("ignoring event because user does not have admin rights")
             return None
 
