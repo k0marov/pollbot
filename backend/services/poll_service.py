@@ -15,11 +15,13 @@ class Answer(str, Enum):
 class Question:
     text: str
 
+
 @dataclasses.dataclass
 class AnswerStats:
     yes: int
     no: int
     idk: int
+
 
 @dataclasses.dataclass
 class PollStats:
@@ -57,4 +59,3 @@ class PollService(abc.ABC):
     def get_stats(self, poll_id: str) -> typing.Optional[PollStats]:
         """Returns the response stats for the poll with the given id"""
         pass
-
