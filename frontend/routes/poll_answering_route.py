@@ -32,7 +32,7 @@ def poll_invite_sender_factory(bot: aiogram.Bot) -> PollInviteSender:
 def poll_answering_route(services: Services) -> Router:
     router = Router()
 
-    POLL_KEY = "POLL_ID" # TODO: storing the full poll for each user is not efficient, this can be a bottleneck
+    POLL_ID_KEY = "POLL_ID"
     QUESTION_ID_KEY = "QUESTION_ID"
 
     @router.callback_query(filters.Text(startswith=ACCEPT_POLL_CB_PREFIX))
@@ -41,7 +41,7 @@ def poll_answering_route(services: Services) -> Router:
         poll = services.poll.get_poll(poll_id) # TODO: handle None
         question_id = 0
         await state.set_state(PollAnswering.answering_question)
-        await state.set_data({POLL_KEY: poll, QUESTION_ID_KEY: question_id})
+        await state.set_data({POLL_ID_KEY: poll_id, QUESTION_ID_KEY: question_id})
         await query.answer()
 
         await query.message.answer(poll.poll.questions[question_id].text)
