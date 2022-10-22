@@ -14,6 +14,7 @@ class PollAnswering(state.StatesGroup):
     answering_question = state.State()
 
 
+# TODO: maybe just move this to the poll_sending_route to get rid of the typedef complexity
 # PollInviteSender is an async function that sends a message with a poll invitation to the given chat id
 PollInviteSender = Callable[[str, poll_service.PollEntity], Coroutine[Any, Any, None]]
 
@@ -37,12 +38,18 @@ def poll_answering_route(services: Services) -> Router:
 
     @router.callback_query(filters.Text(startswith=ACCEPT_POLL_CB_PREFIX))
     async def accept_poll_callback(query: types.CallbackQuery, state: FSMContext):
+        await query.message.delete_reply_markup()
+        await query.answer()
+
         poll_id = query.data.removeprefix(ACCEPT_POLL_CB_PREFIX)
-        poll = services.poll.get_poll(poll_id) # TODO: handle None
+        poll = services.poll.get_poll(poll_id)
+        if not poll:
+            await query.message.answer("К сожалению, данный опрос больше не доступен.")
+            return
+
         question_id = 0
         await state.set_state(PollAnswering.answering_question)
         await state.set_data({POLL_ID_KEY: poll_id, QUESTION_ID_KEY: question_id})
-        await query.answer()
 
         await query.message.answer(poll.poll.questions[question_id].text)
 
