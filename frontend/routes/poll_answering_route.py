@@ -11,6 +11,7 @@ from backend.services.poll_service import Answer
 from backend.services.services import Services
 
 # TODO: move all of the text literals to a separate module as constants
+# TODO: maybe get rid of PollEntity to reduce complexity
 
 
 class PollAnswering(state.StatesGroup):
@@ -29,7 +30,8 @@ def poll_invite_sender_factory(bot: aiogram.Bot) -> PollInviteSender:
         cb_data = ACCEPT_POLL_CB_PREFIX + poll.id
         buttons = [[aiogram.types.InlineKeyboardButton(text="OK", callback_data=cb_data)]]
         keyboard = types.InlineKeyboardMarkup(inline_keyboard=buttons)
-        await bot.send_message(chat_id, "Пожалуйста, поучавствуйте в опросе.", reply_markup=keyboard) # TODO: add poll title
+        text = "Пожалуйста, поучавствуйте в опросе: " + poll.poll.title
+        await bot.send_message(chat_id, text, reply_markup=keyboard)
 
     return invite_sender
 
@@ -42,7 +44,7 @@ def poll_answering_route(services: Services) -> Router:
     ANSWER_CB_PREFIX = "answer_"
     ANSWER_YES = ANSWER_CB_PREFIX+"yes"
     ANSWER_NO = ANSWER_CB_PREFIX+"no"
-    ANSWER_IDK = ANSWER_CB_PREFIX="idk"
+    ANSWER_IDK = ANSWER_CB_PREFIX+"idk"
 
     @router.callback_query(filters.Text(startswith=ACCEPT_POLL_CB_PREFIX))
     async def accept_poll_callback(query: types.CallbackQuery, state: FSMContext):
@@ -64,12 +66,38 @@ def poll_answering_route(services: Services) -> Router:
         keyboard = types.InlineKeyboardMarkup(inline_keyboard=buttons)
         await query.message.answer(poll.poll.questions[question_id].text, reply_markup=keyboard)
 
-    @router.callback_query(filters.Text(startswith=ANSWER_CB_PREFIX))#, filters.StateFilter(PollAnswering.answering_question))
+    @router.callback_query(filters.Text(startswith=ANSWER_CB_PREFIX), filters.StateFilter(PollAnswering.answering_question))
     async def answer_question_callback(query: types.CallbackQuery, state: FSMContext):
-        await query.answer("Hello")
-        pass
+        await query.answer()
+        await query.message.delete_reply_markup()
+        answer = query.data.removeprefix(ANSWER_CB_PREFIX)
+        await query.message.edit_text(query.message.text + '\nВаш ответ: ' + answer)
 
+
+
+        # TODO: remove code duplication
+        state_data = await state.get_data()
+        question_id = state_data.get(QUESTION_ID_KEY)
+        poll_id = state_data.get(POLL_ID_KEY)
+        poll = services.poll.get_poll(poll_id)
+        if not poll:
+            await query.message.answer("К сожалению, данный опрос больше не доступен.")
+            return
+        if question_id == len(poll.poll.questions)-1:
+            await query.message.answer("Спасибо за участие в опросе")
+            await state.clear()
+            return
+
+        question_id += 1
+        await state.update_data({QUESTION_ID_KEY: question_id})
+
+        buttons = [[types.InlineKeyboardButton(text=text, callback_data=cb)
+                    for text, cb in [("Да", ANSWER_YES), ("Нет", ANSWER_NO), ("Не знаю", ANSWER_IDK)]]]
+        keyboard = types.InlineKeyboardMarkup(inline_keyboard=buttons)
+        await query.message.answer(poll.poll.questions[question_id].text, reply_markup=keyboard)
 
 
     return router
 
+
+# TODO: replace set_data with update_data everywhere
