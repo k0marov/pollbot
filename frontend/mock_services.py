@@ -1,7 +1,9 @@
 from typing import List
 
+import typing
+
 from backend.services.admin_service import AdminService
-from backend.services.poll_service import PollService, Answer, Poll, PollStats, PollEntity
+from backend.services.poll_service import PollService, Answer, Poll, PollStats, PollEntity, AnswerStats
 from backend.services.user_service import UserService
 
 
@@ -15,21 +17,32 @@ class MockAdminService(AdminService):
 class MockPollService(PollService):
     def __init__(self):
         self.polls = []
-    def get_stats(self, poll_id: str) -> PollStats:
-        pass
+        self.stats = {}
+    def get_stats(self, poll_id: str) -> typing.Optional[PollStats]:
+        return self.stats[poll_id]
 
     def create_poll(self, poll: Poll) -> str:
         print("created new poll: " + str(poll))
         self.polls.append(poll)
         return str(len(self.polls)-1)
 
-    def get_poll(self, poll_id: str) -> PollEntity:
+    def get_poll(self, poll_id: str) -> typing.Optional[PollEntity]:
         print("getting poll: " + str(poll_id))
         return PollEntity(poll=self.polls[int(poll_id)], id=poll_id)
 
 
     def record_answer(self, poll_id: str, question_id: int, answer: Answer) -> None:
         print("recording answer " + answer + " for question " + str(question_id) + " in poll " + poll_id)
+        poll = self.get_poll(poll_id)
+        if not poll_id in self.stats:
+            self.stats[poll_id] = PollStats([(question, AnswerStats(0, 0, 0)) for question in poll.poll.questions])
+        if answer == Answer.YES:
+            self.stats[poll_id].question_stats[question_id][1].yes += 1
+        elif answer == Answer.NO:
+            self.stats[poll_id].question_stats[question_id][1].no += 1
+        elif answer == Answer.IDK:
+            self.stats[poll_id].question_stats[question_id][1].idk += 1
+        print(self.stats[poll_id])
         return
 
 class MockUserService(UserService):
@@ -39,5 +52,5 @@ class MockUserService(UserService):
         return self.users
 
     def add_user(self, user: str):
-        self.users.append(user)
+        if user not in self.users: self.users.append(user)
         print("added user %s" % user)

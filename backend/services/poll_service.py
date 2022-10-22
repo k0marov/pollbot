@@ -36,6 +36,7 @@ class PollEntity:
     poll: Poll
 
 
+
 class PollService(abc.ABC):
     @abc.abstractmethod
     def create_poll(self, poll: Poll) -> str:
@@ -43,7 +44,7 @@ class PollService(abc.ABC):
         pass
 
     @abc.abstractmethod
-    def get_poll(self, poll_id: str) -> PollEntity:
+    def get_poll(self, poll_id: str) -> typing.Optional[PollEntity]:
         """Returns the poll with the given id"""
         pass
 
@@ -53,7 +54,7 @@ class PollService(abc.ABC):
         pass
 
     @abc.abstractmethod
-    def get_stats(self, poll_id: str) -> PollStats:
+    def get_stats(self, poll_id: str) -> typing.Optional[PollStats]:
         """Returns the response stats for the poll with the given id"""
         pass
 
