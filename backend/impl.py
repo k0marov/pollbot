@@ -5,12 +5,11 @@ from services.admin_service import AdminService
 from services.user_service import UserService
 from services.poll_service import PollService, Poll, AnswerStats, Answer, Question, PollStats
 from database import JsonDatabase
-import dotenv
 
 
 class AdminServiceImpl(AdminService):
-    def __init__(self):
-        self.password = dotenv.get_key("env/.env", "PASSWORD")
+    def __init__(self, password: str):
+        self.password = password
         self.database = JsonDatabase("json_data/admins.json")
 
     def authorize(self, password: str, user: str) -> bool:
@@ -52,8 +51,8 @@ class PollServiceImpl(PollService):
         polls = self.database.get().response["Data"]
         if not (poll.title in polls):
             questions = {}
-            for i in poll.questions:
-                questions[i.id] = {"text": i.text, "answers": {str(Answer.YES): 0, str(Answer.NO): 0, str(Answer.IDK): 0}}
+            for i, q in enumerate(poll.questions):
+                questions[i]({"text": q.text, "answers": {str(Answer.YES): 0, str(Answer.NO): 0, str(Answer.IDK): 0}})
             polls[poll.title] = {"title": poll.title, "questions": questions}
             self.database.push(polls)
         return poll.title
@@ -62,7 +61,7 @@ class PollServiceImpl(PollService):
         data = self.database.get().response["Data"][poll_id]
         questions = []
         for k, v in data["questions"].items():
-            questions.append(Question(k, v["text"]))
+            questions.append(Question(v["text"]))
         return Poll(data["title"], questions)
 
     def record_answer(self, poll_id: str, question_id: str, answer: Answer) -> None:
@@ -74,7 +73,7 @@ class PollServiceImpl(PollService):
         data = self.database.get().response["Data"]
         questions = self.get_poll(poll_id).questions
         answers = []
-        for q in questions:
-            answer = data[poll_id]["questions"][q.id]["answers"]
+        for i, q in enumerate(questions):
+            answer = data[poll_id]["questions"][i]["answers"]
             answers.append((q, AnswerStats(answer[str(Answer.YES)], answer[str(Answer.NO)], answer[str(Answer.IDK)])))
         return PollStats(answers)
