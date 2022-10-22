@@ -1,14 +1,17 @@
 from aiogram import Router, filters, types
 
 from backend.services.services import Services
+from frontend.middlewares.admin_middleware import AdminCheckMiddleware
 from frontend.routes import poll_answering_route
 
 
 # TODO: maybe move poll saving from a db to the aiogram's state or some other built-in feature.
 #  This will make it easier to implement every admin having its own poll list.
 
-def poll_sending_route(services: Services, send_poll_invite: poll_answering_route.PollInviteSender) -> Router:
+def poll_sending_route(services: Services, send_poll_invite: poll_answering_route.PollInviteSender, admin_mw: AdminCheckMiddleware) -> Router:
     router = Router()
+    router.message.middleware(admin_mw.msg)
+    router.callback_query.middleware(admin_mw.cb)
 
     @router.message(filters.Command("send_poll"))
     async def admin_send_poll_handler(message: types.Message):

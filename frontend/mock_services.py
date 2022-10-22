@@ -8,11 +8,19 @@ from backend.services.user_service import UserService
 
 
 class MockAdminService(AdminService):
+    def __init__(self):
+        self._admins = []
     def authorize(self, password: str, user: str) -> bool:
-        return password == "abracadabra"
+        print(f"authorizing {user} with password {password}")
+        if password == "abracadabra":
+            if not user in self._admins:
+                self._admins.append(user)
+            return True
+        return False
 
     def check_admin(self, user: str) -> bool:
-        return False
+        print(f"checking admin {user}")
+        return user in self._admins
 
 class MockPollService(PollService):
     def __init__(self):

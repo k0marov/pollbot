@@ -8,13 +8,17 @@ from backend.services.poll_service import Question, Poll
 from frontend.bot import Services
 
 # TODO: add the admin checks
+from frontend.middlewares.admin_middleware import AdminCheckMiddleware
+
 
 class PollCreation(state.StatesGroup):
     entering_title = state.State()
     entering_question = state.State()
 
-def poll_creation_route(services: Services) -> Router:
+def poll_creation_route(services: Services, admin_mw: AdminCheckMiddleware) -> Router:
     router = Router()
+    router.message.middleware(admin_mw.msg)
+    router.callback_query.middleware(admin_mw.cb)
 
     POLL_KEY = "poll"
     CANCEL_CB_DATA = "cancel"

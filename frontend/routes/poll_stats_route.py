@@ -1,10 +1,13 @@
 from aiogram import Router, types, filters
 
 from backend.services.services import Services
+from frontend.middlewares.admin_middleware import AdminCheckMiddleware
 
 
-def poll_stats_route(services: Services) -> Router:
+def poll_stats_route(services: Services, admin_mw: AdminCheckMiddleware) -> Router:
     router = Router()
+    router.message.middleware(admin_mw.msg)
+    router.callback_query.middleware(admin_mw.cb)
 
     @router.message(filters.Command("stats"))
     async def stats(message: types.Message):
