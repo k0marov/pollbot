@@ -23,6 +23,9 @@ class MockAdminService(AdminService):
         return user in self._admins
 
 class MockPollService(PollService):
+    def get_all_polls(self) -> List[PollEntity]:
+        return [PollEntity(str(i), p) for i, p in enumerate(self.polls)]
+
     def __init__(self):
         self.polls = []
         self.stats = {}
