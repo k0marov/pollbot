@@ -28,8 +28,9 @@ class MockPollService(PollService):
         return PollEntity(poll=self.polls[int(poll_id)], id=poll_id)
 
 
-    def record_answer(self, poll_id: str, question_id: str, answer: Answer) -> None:
-        raise NotImplementedError()
+    def record_answer(self, poll_id: str, question_id: int, answer: Answer) -> None:
+        print("recording answer " + answer + " for question " + str(question_id) + " in poll " + poll_id)
+        return
 
 class MockUserService(UserService):
     def __init__(self):

@@ -3,8 +3,10 @@ from typing import Callable, Coroutine, Any
 
 import aiogram
 from aiogram import types, Router, filters
+from aiogram.filters import callback_data
 from aiogram.fsm import state
 from aiogram.fsm.context import FSMContext
+from aiogram.utils.keyboard import InlineKeyboardBuilder
 
 from backend.services import poll_service
 from backend.services.poll_service import Answer
@@ -14,9 +16,12 @@ from backend.services.services import Services
 # TODO: maybe get rid of PollEntity to reduce complexity
 
 
-class PollAnswering(state.StatesGroup):
-    answering_question = state.State()
+class AnswerCB(callback_data.CallbackData, prefix="answer"):
+    answer: Answer
+    poll_id: str
+    question_id: int
 
+# TODO: move keyboards to a separate module
 
 # TODO: maybe just move this to the poll_sending_route to get rid of the typedef complexity
 PollInviteSender = Callable[[str, poll_service.PollEntity], Coroutine[Any, Any, None]]
@@ -38,58 +43,40 @@ def poll_invite_sender_factory(bot: aiogram.Bot) -> PollInviteSender:
 def poll_answering_route(services: Services) -> Router:
     router = Router()
 
-    POLL_ID_KEY = "POLL_ID"
-    QUESTION_ID_KEY = "QUESTION_ID"
-
-    ANSWER_CB_PREFIX = "answer_"
-    ANSWER_YES = ANSWER_CB_PREFIX+"yes"
-    ANSWER_NO = ANSWER_CB_PREFIX+"no"
-    ANSWER_IDK = ANSWER_CB_PREFIX+"idk"
-
-
-    async def _send_next_question_invite(message: types.Message, state: FSMContext):
-        state_data = await state.get_data()
-        question_id = state_data.get(QUESTION_ID_KEY)
-        poll_id = state_data.get(POLL_ID_KEY)
+    async def _send_next_question_invite(message: types.Message, poll_id: str, question_id: int):
         poll = services.poll.get_poll(poll_id)
         if not poll:
             await message.answer("К сожалению, данный опрос больше не доступен.")
             return
-        if question_id == len(poll.poll.questions)-1:
+        if question_id > len(poll.poll.questions)-1:
             await message.answer("Спасибо за участие в опросе")
-            await state.clear()
             return
 
-        buttons = [[types.InlineKeyboardButton(text=text, callback_data=cb)
-                    for text, cb in [("Да", ANSWER_YES), ("Нет", ANSWER_NO), ("Не знаю", ANSWER_IDK)]]]
-        keyboard = types.InlineKeyboardMarkup(inline_keyboard=buttons)
-        await message.answer(poll.poll.questions[question_id].text, reply_markup=keyboard)
-
-        question_id += 1
-        await state.update_data({QUESTION_ID_KEY: question_id})
+        answers = [(answer, AnswerCB(answer=answer, poll_id=poll_id, question_id=question_id))
+                   for answer in [Answer.YES, Answer.NO, Answer.IDK]]
+        builder = InlineKeyboardBuilder()
+        for text, cb in answers: builder.button(text=text, callback_data=cb)
+        await message.answer(poll.poll.questions[question_id].text, reply_markup=builder.as_markup())
 
 
     @router.callback_query(filters.Text(startswith=ACCEPT_POLL_CB_PREFIX))
-    async def accept_poll_callback(query: types.CallbackQuery, state: FSMContext):
+    async def accept_poll_callback(query: types.CallbackQuery):
         await query.message.delete_reply_markup()
         await query.answer()
 
         poll_id = query.data.removeprefix(ACCEPT_POLL_CB_PREFIX)
-        await state.set_state(PollAnswering.answering_question)
-        await state.set_data({POLL_ID_KEY: poll_id, QUESTION_ID_KEY: 0})
 
-        await _send_next_question_invite(query.message, state)
+        await _send_next_question_invite(query.message, poll_id, question_id=0)
 
-
-    @router.callback_query(filters.Text(startswith=ANSWER_CB_PREFIX), filters.StateFilter(PollAnswering.answering_question))
-    async def answer_question_callback(query: types.CallbackQuery, state: FSMContext):
+    @router.callback_query(AnswerCB.filter())
+    async def answer_question_callback(query: types.CallbackQuery, callback_data: AnswerCB):
         await query.message.delete_reply_markup()
         await query.answer()
 
-        answer = query.data.removeprefix(ANSWER_CB_PREFIX)
-        await query.message.edit_text(query.message.text + '\nВаш ответ: ' + answer) # TODO: pretty print the answer
+        services.poll.record_answer(callback_data.poll_id, callback_data.question_id, callback_data.answer)
+        await query.message.edit_text(query.message.text + '\nВаш ответ: ' + callback_data.answer) # TODO: pretty print the answer
 
-        await _send_next_question_invite(query.message, state)
+        await _send_next_question_invite(query.message, callback_data.poll_id, callback_data.question_id+1)
 
 
 
