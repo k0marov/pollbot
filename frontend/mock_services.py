@@ -3,7 +3,8 @@ from typing import List
 import typing
 
 from backend.services.admin import AdminService
-from backend.services.poll import PollService, Answer, Poll, PollStats, PollEntity, AnswerStats
+from backend.services.poll import PollService, Poll, PollEntity
+from backend.services.stats import PollStats, Answer, AnswerStats
 from backend.services.user import UserService
 
 

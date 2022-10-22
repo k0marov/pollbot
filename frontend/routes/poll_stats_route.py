@@ -25,7 +25,7 @@ def poll_stats_route(services: Services, admin_mw: AdminCheckMiddleware) -> Rout
     async def poll_chosen(query: types.CallbackQuery):
         poll_id = query.data.removeprefix(POLL_ID_PREFIX)
         poll = services.poll.get_poll(poll_id) # TODO: handle None
-        stats = services.poll.get_stats(poll_id)
+        stats = services.stats.get_stats(poll_id)
         if not stats:
             await query.message.answer("Для этого опроса пока нет статистики.")
             return

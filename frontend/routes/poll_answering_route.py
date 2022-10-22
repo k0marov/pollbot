@@ -1,15 +1,12 @@
-import asyncio
 from typing import Callable, Coroutine, Any
 
 import aiogram
 from aiogram import types, Router, filters
 from aiogram.filters import callback_data
-from aiogram.fsm import state
-from aiogram.fsm.context import FSMContext
 from aiogram.utils.keyboard import InlineKeyboardBuilder
 
 from backend.services import poll
-from backend.services.poll import Answer
+from backend.services.stats import Answer
 from backend.services.services import Services
 
 # TODO: move all of the text literals to a separate module as constants
@@ -72,7 +69,7 @@ def poll_answering_route(services: Services) -> Router:
         await query.message.delete_reply_markup()
         await query.answer()
 
-        services.poll.record_answer(callback_data.poll_id, callback_data.question_id, callback_data.answer)
+        services.stats.record_answer(callback_data.poll_id, callback_data.question_id, callback_data.answer)
         await query.message.edit_text(query.message.text + '\nВаш ответ: ' + callback_data.answer) # TODO: pretty print the answer
 
         await _send_next_question_invite(query.message, callback_data.poll_id, callback_data.question_id+1)
