@@ -8,8 +8,8 @@ from aiogram.fsm import state
 from aiogram.fsm.context import FSMContext
 from aiogram.utils.keyboard import InlineKeyboardBuilder
 
-from backend.services import poll_service
-from backend.services.poll_service import Answer
+from backend.services import poll
+from backend.services.poll import Answer
 from backend.services.services import Services
 
 # TODO: move all of the text literals to a separate module as constants
@@ -23,13 +23,13 @@ class AnswerCB(callback_data.CallbackData, prefix="answer"):
 # TODO: move keyboards to a separate module
 
 # TODO: maybe just move this to the poll_sending_route to get rid of the typedef complexity
-PollInviteSender = Callable[[str, poll_service.PollEntity], Coroutine[Any, Any, None]]
+PollInviteSender = Callable[[str, poll.PollEntity], Coroutine[Any, Any, None]]
 """async function that sends a message with a poll invitation to the given chat id"""
 
 ACCEPT_POLL_CB_PREFIX = "accept_poll_"
 
 def poll_invite_sender_factory(bot: aiogram.Bot) -> PollInviteSender:
-    async def invite_sender(chat_id: str, poll: poll_service.PollEntity) -> None:
+    async def invite_sender(chat_id: str, poll: poll.PollEntity) -> None:
         print("inviting user %s" % chat_id)
         cb_data = ACCEPT_POLL_CB_PREFIX + poll.id
         buttons = [[aiogram.types.InlineKeyboardButton(text="OK", callback_data=cb_data)]]

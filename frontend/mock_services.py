@@ -2,9 +2,9 @@ from typing import List
 
 import typing
 
-from backend.services.admin_service import AdminService
-from backend.services.poll_service import PollService, Answer, Poll, PollStats, PollEntity, AnswerStats
-from backend.services.user_service import UserService
+from backend.services.admin import AdminService
+from backend.services.poll import PollService, Answer, Poll, PollStats, PollEntity, AnswerStats
+from backend.services.user import UserService
 
 
 class MockAdminService(AdminService):

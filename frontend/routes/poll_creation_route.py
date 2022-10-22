@@ -4,7 +4,7 @@ from aiogram.fsm.context import FSMContext
 from aiogram.fsm import state
 from aiogram import types
 
-from backend.services.poll_service import Question, Poll
+from backend.services.poll import Question, Poll
 from frontend.bot import Services
 
 # TODO: add the admin checks

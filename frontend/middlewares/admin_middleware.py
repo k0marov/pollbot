@@ -3,7 +3,7 @@ from typing import Callable, Dict, Any, Awaitable
 
 from aiogram import BaseMiddleware, types
 
-from backend.services.admin_service import AdminService
+from backend.services.admin import AdminService
 
 # TODO: somehow remove code duplication
 

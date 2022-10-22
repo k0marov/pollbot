@@ -1,8 +1,8 @@
 import dataclasses
 
-from backend.services.admin_service import AdminService
-from backend.services.poll_service import PollService
-from backend.services.user_service import UserService
+from backend.services.admin import AdminService
+from backend.services.poll import PollService
+from backend.services.user import UserService
 
 
 @dataclasses.dataclass
