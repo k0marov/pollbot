@@ -39,6 +39,11 @@ def poll_answering_route(services: Services) -> Router:
     POLL_ID_KEY = "POLL_ID"
     QUESTION_ID_KEY = "QUESTION_ID"
 
+    ANSWER_CB_PREFIX = "answer_"
+    ANSWER_YES = ANSWER_CB_PREFIX+"yes"
+    ANSWER_NO = ANSWER_CB_PREFIX+"no"
+    ANSWER_IDK = ANSWER_CB_PREFIX="idk"
+
     @router.callback_query(filters.Text(startswith=ACCEPT_POLL_CB_PREFIX))
     async def accept_poll_callback(query: types.CallbackQuery, state: FSMContext):
         await query.message.delete_reply_markup()
@@ -54,12 +59,15 @@ def poll_answering_route(services: Services) -> Router:
         await state.set_state(PollAnswering.answering_question)
         await state.set_data({POLL_ID_KEY: poll_id, QUESTION_ID_KEY: question_id})
 
-        buttons = [[types.InlineKeyboardButton(text="Да", callback_data=str(Answer.YES)),
-                    types.InlineKeyboardButton(text="Нет", callback_data=str(Answer.NO)),
-                    types.InlineKeyboardButton(text="Не знаю", callback_data=str(Answer.IDK)),]]
+        buttons = [[types.InlineKeyboardButton(text=text, callback_data=cb)
+                    for text, cb in [("Да", ANSWER_YES), ("Нет", ANSWER_NO), ("Не знаю", ANSWER_IDK)]]]
         keyboard = types.InlineKeyboardMarkup(inline_keyboard=buttons)
         await query.message.answer(poll.poll.questions[question_id].text, reply_markup=keyboard)
 
+    @router.callback_query(filters.Text(startswith=ANSWER_CB_PREFIX))#, filters.StateFilter(PollAnswering.answering_question))
+    async def answer_question_callback(query: types.CallbackQuery, state: FSMContext):
+        await query.answer("Hello")
+        pass
 
 
 
