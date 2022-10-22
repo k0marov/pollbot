@@ -22,12 +22,13 @@ class AnswerStats:
 
 @dataclasses.dataclass
 class PollStats:
-    question_stats: List[typing.Tuple[Question, AnswerStats]]
+    question_stats: typing.List[AnswerStats]
 
 
 class StatsService(abc.ABC):
+    # TODO: stop accepting poll_len here since it is ugly
     @abc.abstractmethod
-    def record_answer(self, poll_id: str, question_id: int, answer: Answer) -> None:
+    def record_answer(self, poll_id: str, question_id: int, answer: Answer, poll_len: int) -> None:
         """Records the answer to the poll question with the given id"""
         pass
 

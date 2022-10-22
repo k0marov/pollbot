@@ -44,14 +44,6 @@ class PollServiceImpl(poll.PollService):
     def _polls_to_json(self, polls: List[PollEntity]) -> typing.List[typing.Dict[str, typing.Any]]:
         return [self._poll_to_json(poll.poll) for poll in polls]
 
-    # def _stats_from_json(self, json: typing.Dict[str, typing.Any]) -> typing.Dict[str, PollStatsModel]:
-    #     return {
-    #       k: v for k, v in json
-    #     }
-    # def _stats_model_from_json(self, json: typing.Dict[str, typing.Any]) -> PollStatsModel:
-    #     return PollStatsModel({
-    #         id: poll.AnswerStats(yes=ans[Answer.YES], no=ans[Answer.NO], idk=ans[Answer.IDK]) for id, ans in json.get("questions")
-    #     })
 
 
 

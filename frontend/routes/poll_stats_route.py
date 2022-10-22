@@ -30,8 +30,8 @@ def poll_stats_route(services: Services, admin_mw: AdminCheckMiddleware) -> Rout
             await query.message.answer("Для этого опроса пока нет статистики.")
             return
         text = f"Статистика для опроса \"{poll.title}\"\n"
-        for question, qstats in stats.question_stats:
-            text += f"{question.text}: Yes {qstats.yes}, No {qstats.no}, Idk {qstats.idk}\n"
+        for i, qstats in enumerate(stats.question_stats):
+            text += f"{poll.questions[i].text}: Yes {qstats.yes}, No {qstats.no}, Idk {qstats.idk}\n"
         await query.message.answer(text)
 
         # TODO: factor out this part into a reusable function

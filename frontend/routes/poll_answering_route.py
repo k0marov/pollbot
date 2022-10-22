@@ -6,6 +6,7 @@ from aiogram.filters import callback_data
 from aiogram.utils.keyboard import InlineKeyboardBuilder
 
 from backend.services import poll
+from backend.services.poll import PollEntity
 from backend.services.stats import Answer
 from backend.services.services import Services
 
@@ -39,20 +40,16 @@ def poll_invite_sender_factory(bot: aiogram.Bot) -> PollInviteSender:
 def poll_answering_route(services: Services) -> Router:
     router = Router()
 
-    async def _send_next_question_invite(message: types.Message, poll_id: str, question_id: int):
-        poll = services.poll.get_poll(poll_id)
-        if not poll:
-            await message.answer("К сожалению, данный опрос больше не доступен.")
-            return
-        if question_id > len(poll.questions)-1:
+    async def _send_next_question_invite(message: types.Message, poll: PollEntity, question_id: int):
+        if question_id > len(poll.poll.questions)-1:
             await message.answer("Спасибо за участие в опросе")
             return
 
-        answers = [(answer, AnswerCB(answer=answer, poll_id=poll_id, question_id=question_id))
+        answers = [(answer, AnswerCB(answer=answer, poll_id=poll.id, question_id=question_id))
                    for answer in [Answer.YES, Answer.NO, Answer.IDK]]
         builder = InlineKeyboardBuilder()
         for text, cb in answers: builder.button(text=text, callback_data=cb)
-        await message.answer(poll.questions[question_id].text, reply_markup=builder.as_markup())
+        await message.answer(poll.poll.questions[question_id].text, reply_markup=builder.as_markup())
 
 
     @router.callback_query(filters.Text(startswith=ACCEPT_POLL_CB_PREFIX))
@@ -61,18 +58,28 @@ def poll_answering_route(services: Services) -> Router:
         await query.answer()
 
         poll_id = query.data.removeprefix(ACCEPT_POLL_CB_PREFIX)
+        poll = services.poll.get_poll(poll_id)
+        if not poll:
+            await query.message.answer("К сожалению, данный опрос больше не доступен")
+            return
 
-        await _send_next_question_invite(query.message, poll_id, question_id=0)
+        await _send_next_question_invite(query.message, PollEntity(poll_id, poll), question_id=0)
 
     @router.callback_query(AnswerCB.filter())
     async def answer_question_callback(query: types.CallbackQuery, callback_data: AnswerCB):
         await query.message.delete_reply_markup()
         await query.answer()
 
-        services.stats.record_answer(callback_data.poll_id, callback_data.question_id, callback_data.answer)
+        poll_id = callback_data.poll_id
+        poll = services.poll.get_poll(poll_id)
+        # TODO: remove code duplication
+        if not poll:
+            await query.message.answer("К сожалению, данный опрос больше не доступен")
+            return
+        services.stats.record_answer(poll_id, callback_data.question_id, callback_data.answer, len(poll.questions))
         await query.message.edit_text(query.message.text + '\nВаш ответ: ' + callback_data.answer) # TODO: pretty print the answer
 
-        await _send_next_question_invite(query.message, callback_data.poll_id, callback_data.question_id+1)
+        await _send_next_question_invite(query.message, PollEntity(poll_id, poll), callback_data.question_id+1)
 
 
 
