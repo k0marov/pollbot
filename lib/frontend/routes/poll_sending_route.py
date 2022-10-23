@@ -59,13 +59,13 @@ def poll_sending_route(services: Services, send_question: poll_answering_route.P
 
         await query.answer()
         await query.message.delete_reply_markup()
-        if cb.question_id == len(poll.questions) - 1:
-            await query.message.edit_text(f"Вопрос №{cb.question_id+1} отправлен всем пользователям") # TODO remove code duplication
-        else:
+        reply_markup = None
+        if cb.question_id != len(poll.questions) - 1:
             next_cb = SendQuestionCB(poll_id=cb.poll_id, question_id=cb.question_id+1)
             builder = InlineKeyboardBuilder()
             builder.button(text="Следующий вопрос", callback_data=next_cb)
-            await query.message.edit_text(f"Вопрос №{cb.question_id+1} отправлен всем пользователям", reply_markup=builder.as_markup())
+            reply_markup = builder.as_markup()
+        await query.message.edit_text(Texts.SENDING_REPORT(cb.question_id, len(all_users)), reply_markup=reply_markup)
 
 
     return router

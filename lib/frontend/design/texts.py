@@ -32,8 +32,8 @@ class Texts:
     POLL_CREATED = "✅Опрос успешно создан✅"
     STOP_ADDING = "☑️Закончить добавление☑️"
     CANCEL = "❌Отменить❌"
-    PARTICIPATION_THANKS = "😀Спасибо за участие в опросе!😀"
-    PARTICIPATE_OK = "Ок ✅"
+    # PARTICIPATION_THANKS = "😀Спасибо за участие в опросе!😀"
+    # PARTICIPATE_OK = "Ок ✅"
     def CHOSEN_POLL(poll: Poll) -> str:
        return f'\nВыбран опрос {poll.title}'
     def STATS(poll: Poll, stats: PollStats) -> str:
@@ -46,13 +46,13 @@ f"""❓{poll.questions[i].text}:
     Не знаю: {qstats.idk}
 """
         return text
-    def INVITATIONS_REPORT(invites: int) -> str:
-        return f"✅Опрос был отправлен в {invites} чат" \
-               + ("ов" if invites % 10 > 1 else "") + "✅"
+    def SENDING_REPORT(question_ind: int, users_amount: int) -> str:
+        return f"✅Вопрос №{question_ind + 1} отправлен {users_amount} " + (
+            "пользователю" if users_amount % 10 == 1 else "пользователям"
+        )
+
     def ENTER_QUESTION(index: int) -> str:
         return f"❓Введите название вопроса №{index}"
-    def POLL_INVITE(poll: Poll) -> str:
-        return f"😀Поучавствуйте в опросе \"{poll.title}\""
     def YOUR_ANSWER(answer: Answer) -> str:
         return f'\n✅Ваш ответ: {Texts.ANSWER(answer)}'
     def ANSWER(a: Answer) -> str:
