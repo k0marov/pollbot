@@ -1,10 +1,10 @@
-import dataclasses
 import typing
 from typing import List
 
-from backend.services import poll
-from backend.services.poll import PollEntity, Poll
-from backend.store import store
+from lib.backend.services import poll
+from lib.backend.services.poll import PollEntity, Poll
+from lib.backend.store import store
+
 
 class PollServiceImpl(poll.PollService):
     def __init__(self, s: store.Store):

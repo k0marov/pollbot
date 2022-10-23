@@ -1,11 +1,8 @@
 import abc
 import dataclasses
 from enum import Enum
-from typing import List
 
 import typing
-
-from backend.services.poll import Question
 
 
 class Answer(str, Enum):

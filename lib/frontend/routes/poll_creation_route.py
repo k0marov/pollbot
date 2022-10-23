@@ -4,11 +4,11 @@ from aiogram.fsm.context import FSMContext
 from aiogram.fsm import state
 from aiogram import types
 
-from backend.services.poll import Question, Poll
-from frontend.bot import Services
+from lib.backend.services.poll import Question, Poll
+from lib.frontend.bot import Services
 
 # TODO: add the admin checks
-from frontend.middlewares.admin_middleware import AdminCheckMiddleware
+from lib.frontend.middlewares.admin_middleware import AdminCheckMiddleware
 
 
 class PollCreation(state.StatesGroup):

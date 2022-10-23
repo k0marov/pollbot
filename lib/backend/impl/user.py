@@ -1,8 +1,7 @@
-import json
 from typing import List
 
-from backend.services import user
-from backend.store import store
+from lib.backend.services import user
+from lib.backend.store import store
 
 
 class UserServiceImpl(user.UserService):

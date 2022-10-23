@@ -1,13 +1,13 @@
 
 from aiogram import Bot, Dispatcher
 
-from backend.services.services import Services
-from frontend.middlewares.admin_middleware import AdminCheckMiddleware
-from frontend.routes.poll_answering_route import poll_answering_route, poll_invite_sender_factory
-from frontend.routes.poll_creation_route import poll_creation_route
-from frontend.routes.poll_sending_route import poll_sending_route
-from frontend.routes.poll_stats_route import poll_stats_route
-from frontend.routes.start_route import start_route
+from lib.backend.services.services import Services
+from lib.frontend.middlewares.admin_middleware import AdminCheckMiddleware
+from lib.frontend.routes.poll_answering_route import poll_answering_route, poll_invite_sender_factory
+from lib.frontend.routes.poll_creation_route import poll_creation_route
+from lib.frontend.routes.poll_sending_route import poll_sending_route
+from lib.frontend.routes.poll_stats_route import poll_stats_route
+from lib.frontend.routes.start_route import start_route
 
 
 class BotFrontend:

@@ -1,7 +1,7 @@
 from typing import List
 
-from backend.services import admin
-from backend.store import store
+from lib.backend.services import admin
+from lib.backend.store import store
 
 
 class AdminServiceImpl(admin.AdminService):

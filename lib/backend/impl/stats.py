@@ -1,8 +1,8 @@
 import typing
 
-from backend.services import stats
-from backend.services.stats import PollStats, Answer, AnswerStats
-from backend.store import store
+from lib.backend.services import stats
+from lib.backend.services.stats import PollStats, Answer, AnswerStats
+from lib.backend.store import store
 
 
 class StatsServiceImpl(stats.StatsService):

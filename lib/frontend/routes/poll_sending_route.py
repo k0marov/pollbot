@@ -2,10 +2,10 @@ import asyncio
 
 from aiogram import Router, filters, types
 
-from backend.services.poll import PollEntity
-from backend.services.services import Services
-from frontend.middlewares.admin_middleware import AdminCheckMiddleware
-from frontend.routes import poll_answering_route
+from lib.backend.services.poll import PollEntity
+from lib.backend.services.services import Services
+from lib.frontend.middlewares.admin_middleware import AdminCheckMiddleware
+from lib.frontend.routes import poll_answering_route
 
 
 # TODO: maybe move poll saving from a db to the aiogram's state or some other built-in feature.

@@ -1,7 +1,7 @@
 from aiogram import Router, types, filters
 
-from backend.services.services import Services
-from frontend.middlewares.admin_middleware import AdminCheckMiddleware
+from lib.backend.services.services import Services
+from lib.frontend.middlewares.admin_middleware import AdminCheckMiddleware
 
 
 def poll_stats_route(services: Services, admin_mw: AdminCheckMiddleware) -> Router:

@@ -5,10 +5,10 @@ from aiogram import types, Router, filters
 from aiogram.filters import callback_data
 from aiogram.utils.keyboard import InlineKeyboardBuilder
 
-from backend.services import poll
-from backend.services.poll import PollEntity
-from backend.services.stats import Answer
-from backend.services.services import Services
+from lib.backend.services import poll
+from lib.backend.services.poll import PollEntity
+from lib.backend.services.stats import Answer
+from lib.backend.services.services import Services
 
 # TODO: move all of the text literals to a separate module as constants
 

@@ -1,6 +1,6 @@
 from aiogram import types, Router
 from aiogram import filters
-from backend.services.services import Services
+from lib.backend.services.services import Services
 
 def start_route(services: Services) -> Router:
     router = Router()

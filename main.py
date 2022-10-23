@@ -1,18 +1,10 @@
-import asyncio
-import os
-
-from di import initialize_bot
-
-TOKEN_KEY = "ANONYMOUS_POLL_BOT_TOKEN"
+from lib.config import load_config
+from lib.di import initialize
 
 def main():
-    token = os.environ.get(TOKEN_KEY)
-    if token is None:
-        print("Please fill in the "+ TOKEN_KEY + " env variable.")
-        return
-    bot = initialize_bot(token)
+    config = load_config()
+    bot = initialize(config)
     bot.start()
-
 
 if __name__ == "__main__":
     main()

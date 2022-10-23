@@ -1,9 +1,8 @@
-import dataclasses
 from typing import Callable, Dict, Any, Awaitable
 
 from aiogram import BaseMiddleware, types
 
-from backend.services.admin import AdminService
+from lib.backend.services.admin import AdminService
 
 # TODO: somehow remove code duplication
 
