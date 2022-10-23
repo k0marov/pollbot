@@ -11,6 +11,10 @@ def start_route(services: Services) -> Router:
     async def _start(message: types.Message):
         services.user.add_user(str(message.chat.id))
         await message.answer(Texts.GREET)
+    @router.message(filters.Command("help"))
+    async def _start(message: types.Message):
+        await message.answer(Texts.HELP)
+
 
     @router.message(filters.Command("admin_login"))
     async def _admin_login(message: types.Message):

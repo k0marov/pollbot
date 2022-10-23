@@ -37,7 +37,7 @@ def poll_sending_route(services: Services, send_poll_invite: poll_answering_rout
         if not poll: return await query.message.answer(Texts.NO_POLL)
         all_users = [user for user in services.user.get_all_users() if user != str(query.message.chat.id)]
 
-        # TODO: maybe there should be a timeout here to escape the 429 Too Many Requests error
+        # TODO: place a timeout here to escape the 429 Too Many Requests error
         await asyncio.gather(*[send_poll_invite(user, PollEntity(id=id, poll=poll)) for user in all_users])
 
         await query.message.answer(Texts.INVITATIONS_REPORT(len(all_users)))

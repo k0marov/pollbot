@@ -1,11 +1,16 @@
 from lib.backend.services.poll import Poll
 
-# TODO: implement a /help route
 from lib.backend.services.stats import PollStats, Answer
 
 
 class Texts:
     GREET = \
+"""
+Привет, я - бот для проведения анонимных опросов. 
+Благодаря мне вы можете получать полностью анонимные опросы. 
+Спасибо за регистрацию!
+"""
+    HELP = \
 """
 Список команд: 
 /admin_login <пароль> - получить права админа
