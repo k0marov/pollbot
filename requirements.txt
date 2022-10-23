@@ -1,2 +1,3 @@
 aiogram==3.0.0b5
 python-dotenv==0.21.0
+redis==4.3.4

@@ -11,7 +11,7 @@ from lib.frontend.bot import BotFrontend
 
 
 def initialize(config: Config) -> BotFrontend:
-    client = redis.Redis(host="localhost", port=6379)
+    client = redis.Redis(host=config.redis_host, port=config.redis_port)
     store = RedisStore(client)
     services = Services(
         admin=AdminServiceImpl(store, config.admin_pass),
