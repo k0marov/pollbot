@@ -34,6 +34,7 @@ def poll_sending_route(services: Services, send_question: poll_answering_route.P
         builder = InlineKeyboardBuilder()
         for e in polls:
             builder.button(text=e.poll.title, callback_data=SendQuestionCB(poll_id=e.id, question_id=0))
+        builder.adjust(1)
         await message.answer(Texts.CHOOSE_POLL, reply_markup=builder.as_markup())
 
 
