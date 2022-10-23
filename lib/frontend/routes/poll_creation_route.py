@@ -7,7 +7,7 @@ from aiogram import types
 from lib.backend.services.poll import Question, Poll
 from lib.frontend.bot import Services
 
-# TODO: add the admin checks
+from lib.frontend.design.texts import Texts
 from lib.frontend.middlewares.admin_middleware import AdminCheckMiddleware
 
 
@@ -26,7 +26,7 @@ def poll_creation_route(services: Services, admin_mw: AdminCheckMiddleware) -> R
 
     @router.message(filters.Command("create_poll"))
     async def create_poll(message: types.Message, state: FSMContext):
-        await message.answer("Введите название для нового опроса: ")
+        await message.answer(Texts.ENTER_TITLE)
         await state.set_state(PollCreation.entering_title)
 
     @router.message(PollCreation.entering_title) # TODO: handle the cases when users sends messages without text
@@ -39,7 +39,6 @@ def poll_creation_route(services: Services, admin_mw: AdminCheckMiddleware) -> R
     @router.message(PollCreation.entering_question)
     async def question_entered(message: types.Message, state: FSMContext):
         state_data = await state.get_data()
-        print(state_data)
         poll = state_data.get(POLL_KEY)
         if not poll:
             raise aiogram.exceptions.TelegramNotFound
@@ -51,7 +50,7 @@ def poll_creation_route(services: Services, admin_mw: AdminCheckMiddleware) -> R
     async def cancel_callback(query: types.CallbackQuery, state: FSMContext):
         await query.message.delete_reply_markup()
         await state.clear()
-        await query.message.answer("Создание опроса отменено")
+        await query.message.answer(Texts.CREATION_CANCELLED)
         await query.answer()
 
     @router.callback_query(filters.Text(text=STOP_CB_DATA))
@@ -64,15 +63,15 @@ def poll_creation_route(services: Services, admin_mw: AdminCheckMiddleware) -> R
         if not poll: return
         services.poll.create_poll(poll)
         await state.clear()
-        await query.message.answer("Опрос успешно создан")
+        await query.message.answer(Texts.POLL_CREATED)
 
     async def _base_send_question_invite(message: types.Message, questions_len: int):
         buttons = [
-            [types.InlineKeyboardButton(text="Закончить добавление", callback_data=STOP_CB_DATA) if questions_len else
-             types.InlineKeyboardButton(text="Отменить", callback_data=CANCEL_CB_DATA)],
+            [types.InlineKeyboardButton(text=Texts.STOP_ADDING, callback_data=STOP_CB_DATA) if questions_len else
+             types.InlineKeyboardButton(text=Texts.CANCEL, callback_data=CANCEL_CB_DATA)],
         ]
         keyboard = types.InlineKeyboardMarkup(inline_keyboard=buttons)
-        await message.answer("Пожалуйста, введите название вопроса №" + str(questions_len+1), reply_markup=keyboard)
+        await message.answer(Texts.ENTER_QUESTION(questions_len+1), reply_markup=keyboard)
 
     return router
 

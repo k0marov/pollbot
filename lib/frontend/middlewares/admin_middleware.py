@@ -5,6 +5,8 @@ from aiogram import BaseMiddleware, types
 from lib.backend.services.admin import AdminService
 
 # TODO: somehow remove code duplication
+from lib.frontend.design.texts import Texts
+
 
 class AdminCheckMessageMiddleware(BaseMiddleware):
     def __init__(self, service: AdminService):
@@ -18,9 +20,7 @@ class AdminCheckMessageMiddleware(BaseMiddleware):
         if self._service.check_admin(user_id):
             return await handler(event, data)
         else:
-            await event.answer("Чтобы выполнить это действие, нужно быть админом. Введите /admin_login")
-            print("ignoring event because user does not have admin rights")
-            return None
+            await event.answer(Texts.NEED_ADMIN_RIGHTS)
 
 class AdminCheckCBMiddleware(BaseMiddleware):
     def __init__(self, service: AdminService):
@@ -35,9 +35,7 @@ class AdminCheckCBMiddleware(BaseMiddleware):
         if self._service.check_admin(user_id):
             return await handler(event, data)
         else:
-            await event.answer("Чтобы выполнить это действие, нужно быть админом. Введите /admin_login")
-            print("ignoring event because user does not have admin rights")
-            return None
+            await event.answer(Texts.NEED_ADMIN_RIGHTS)
 
 class AdminCheckMiddleware:
     def __init__(self, service: AdminService):

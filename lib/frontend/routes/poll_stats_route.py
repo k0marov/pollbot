@@ -1,6 +1,7 @@
 from aiogram import Router, types, filters
 
 from lib.backend.services.services import Services
+from lib.frontend.design.texts import Texts
 from lib.frontend.middlewares.admin_middleware import AdminCheckMiddleware
 
 
@@ -19,25 +20,21 @@ def poll_stats_route(services: Services, admin_mw: AdminCheckMiddleware) -> Rout
             for e in polls
         ]
         keyboard = types.InlineKeyboardMarkup(inline_keyboard=buttons)
-        await message.answer("Выберите опрос:", reply_markup=keyboard)
+        await message.answer(Texts.CHOOSE_POLL, reply_markup=keyboard)
 
     @router.callback_query(filters.Text(startswith=POLL_ID_PREFIX))
     async def poll_chosen(query: types.CallbackQuery):
         poll_id = query.data.removeprefix(POLL_ID_PREFIX)
-        poll = services.poll.get_poll(poll_id) # TODO: handle None
+        poll = services.poll.get_poll(poll_id)
+        if not poll: return await query.message.answer(Texts.NO_POLL)
         stats = services.stats.get_stats(poll_id)
-        if not stats:
-            await query.message.answer("Для этого опроса пока нет статистики.")
-            return
-        text = f"Статистика для опроса \"{poll.title}\"\n"
-        for i, qstats in enumerate(stats.question_stats):
-            text += f"{poll.questions[i].text}: Yes {qstats.yes}, No {qstats.no}, Idk {qstats.idk}\n"
-        await query.message.answer(text)
+        if not stats: return await query.message.answer(Texts.NO_STATS)
+        await query.message.answer(Texts.STATS(poll, stats))
 
         # TODO: factor out this part into a reusable function
         await query.answer()
         await query.message.delete_reply_markup()
-        await query.message.edit_text(query.message.text + f'\nВыбран опрос {poll.title}')
+        await query.message.edit_text(query.message.text + Texts.CHOSEN_POLL(poll))
 
     return router
 
