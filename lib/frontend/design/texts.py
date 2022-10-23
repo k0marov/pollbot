@@ -37,10 +37,10 @@ class Texts:
     def CHOSEN_POLL(poll: Poll) -> str:
        return f'\nВыбран опрос {poll.title}'
     def STATS(poll: Poll, stats: PollStats) -> str:
-        text = f"Статистика для опроса \"{poll.title}\"\n"
+        text = f"✅Статистика для опроса \"{poll.title}\"\n"
         for i, qstats in enumerate(stats.question_stats):
             text += \
-f"""{poll.questions[i].text}:
+f"""❓{poll.questions[i].text}:
     Да: {qstats.yes}
     Нет: {qstats.no}
     Не знаю: {qstats.idk}
