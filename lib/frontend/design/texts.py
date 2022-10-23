@@ -47,7 +47,7 @@ f"""
 """
         return text
     def INVITATIONS_REPORT(invites: int) -> str:
-        return f"Приглашение поучавствовать в опросе было отправлено в {invites} чат" + "ов" if invites % 10 > 1 else ""
+        return f"Приглашение поучавствовать в опросе было отправлено в {invites} чат" + ("ов" if invites % 10 > 1 else "")
     def ENTER_QUESTION(index: int) -> str:
         return f"Пожалуйста, введите название вопроса №{index}"
     def POLL_INVITE(poll: Poll) -> str:
