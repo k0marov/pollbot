@@ -39,8 +39,7 @@ class Texts:
         text = f"Статистика для опроса \"{poll.title}\"\n"
         for i, qstats in enumerate(stats.question_stats):
             text += \
-f"""
-{poll.questions[i].text}:
+f"""{poll.questions[i].text}:
     "Да": {qstats.yes}
     "No": {qstats.no}
     "Не знаю": {qstats.idk}
