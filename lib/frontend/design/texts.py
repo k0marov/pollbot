@@ -40,9 +40,9 @@ class Texts:
         for i, qstats in enumerate(stats.question_stats):
             text += \
 f"""{poll.questions[i].text}:
-    "Да": {qstats.yes}
-    "No": {qstats.no}
-    "Не знаю": {qstats.idk}
+    Да: {qstats.yes}
+    Нет: {qstats.no}
+    Не знаю: {qstats.idk}
 """
         return text
     def INVITATIONS_REPORT(invites: int) -> str:
